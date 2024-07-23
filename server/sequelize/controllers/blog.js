@@ -18,7 +18,7 @@ const getAllBlogs = async (req, res) => {
       if (!blogss) {
         return res.status(404).send("Blog not found");
       }
-      res.json(blog);
+      res.json(blogss);
     } catch (err) {
       console.error(err);
       res.status(500).send("Error fetching blog");
