@@ -1,8 +1,26 @@
 {
+  "name": "your-server-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.3.0",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "mysql2": "^3.10.3",
     "nodemon": "^3.1.4",
     "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "sequelize-mock": "^0.10.2",
+    "supertest": "^7.0.0"
   }
 }
