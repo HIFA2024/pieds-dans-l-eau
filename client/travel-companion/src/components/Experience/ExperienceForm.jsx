@@ -19,7 +19,7 @@ function ExperienceForm() {
     formData.append('file', image);
     formData.append('upload_preset', 'your_upload_preset');
 
-    const res = await axios.post('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', formData);
+    const res = await axios.post('https://api.cloudinary.com/v1_1/dqkvtsybe/image/upload', formData);
     const imageUrl = res.data.secure_url;
 
     
