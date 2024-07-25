@@ -1,5 +1,4 @@
-const Blog = require('../modells/blogs.js');
-const cloudinary = require('../../cloudinaryconfig.js');
+const Blog = require('../modells/blogs.js'); 
 
 const getAllBlogs = async (req, res) => {
   try {
@@ -14,11 +13,11 @@ const getAllBlogs = async (req, res) => {
 const getBlogById = async (req, res) => {
   const id = req.params.id;
   try {
-    const blog = await Blog.findByPk(id);
-    if (!blog) {
+    const blogs = await Blog.findByPk(id);
+    if (!blogs) {
       return res.status(404).send("Blog not found");
     }
-    res.json(blog);
+    res.json(blogs);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching blog");
@@ -26,14 +25,12 @@ const getBlogById = async (req, res) => {
 };
 
 const createBlog = async (req, res) => {
-  const { content, image } = req.body;
+  const { content, image_url } = req.body;
 
   try {
-    const uploadResult = await cloudinary.uploader.upload(image.path);
-
     const newBlog = await Blog.create({
       content,
-      image_url: uploadResult.secure_url
+      image_url 
     });
 
     res.status(201).json({ message: "Blog created successfully", newBlog });
@@ -54,10 +51,7 @@ const updateBlog = async (req, res) => {
     }
 
     blogToUpdate.content = content;
-    if (image) {
-      const uploadResult = await cloudinary.uploader.upload(image.path);
-      blogToUpdate.image_url = uploadResult.secure_url;
-    }
+    blogToUpdate.image = image; 
 
     await blogToUpdate.save();
 
@@ -75,6 +69,7 @@ const deleteBlog = async (req, res) => {
     if (!blogToDelete) {
       return res.status(404).send("Blog not found");
     }
+
     await blogToDelete.destroy();
     res.status(200).send("Blog deleted successfully");
   } catch (err) {
