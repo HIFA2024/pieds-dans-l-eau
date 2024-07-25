@@ -1,7 +1,13 @@
 import React from 'react'
+import Blogcloudi from '../client/node_modules/Blogcloudi.jsx'
 
-export const app = () => {
+ const app = () => {
   return (
-    <div>app</div>
+    <div>app
+
+
+<Blogcloudi/>
+    </div>
+    
   )
 }

@@ -3,12 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",    
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm start\" \"npm run client\"" 
   },
   "author": "hifa",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "react": "^18.3.1"
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^5.16.5",
+    "axios": "^0.24.0",
+    "cloudinary": "^1.28.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "mysql2": "^2.3.2",
+    "nodemon": "^3.1.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.0",
+    "sequelize": "^6.13.4"
   }
 }
