@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Typography, Card, CardContent, CardHeader, Divider, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CardMedia, IconButton } from '@mui/material';
 import { CloudUpload as CloudUploadIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import AdbIcon from '@mui/icons-material/Adb';
 import axios from 'axios';
 
 const experiences = [
@@ -59,7 +60,7 @@ function ExperienceList() {
   };
 
   return (
-    <Container sx={{ py: 8 }} maxWidth="md">
+    <Container sx={{ py: 8 }} maxWidth="xl">
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" component="h2" gutterBottom>
           My Travel Experiences
@@ -68,7 +69,7 @@ function ExperienceList() {
           Logout
         </Button>
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, backgroundColor: '#ffecb3', borderRadius: '25px' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 5, backgroundColor: 'white', borderRadius: '25px' }}>
         {experiences.map((experience, index) => (
           <Card key={index} sx={{ maxWidth: 600, mx: 'auto', borderRadius: '25px', borderColor: 'lightgray', borderWidth: 1, borderStyle: 'solid' }}>
             <CardHeader title={experience.title} />
