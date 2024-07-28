@@ -52,6 +52,14 @@ const Blog = sequelize.define("blogs", {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
+  userId: { // This is the foreign key
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'users', // Table name
+      key: 'iduser', // Column name
+    },
+    allowNull: false,
+  },
 });
 
 const Comment = sequelize.define("comments", {

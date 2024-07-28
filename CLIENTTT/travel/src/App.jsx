@@ -1,22 +1,129 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './filebutt.css'
 import Home from "./Home.jsx";
 import Login from "./Login.jsx";
 import Account from "./Account.jsx";
 import Addblog from "./Addblog.jsx";
 import About from "./About.jsx";
-
-// import axios from 'axios'
-// import Nav from "./Navbar.jsx";
+import Myblogs from "./Myblogs.jsx";
+import axios from 'axios'
 import Allblogs from "./Allblogs.jsx";
+import Updateblog from "./Updateblog.jsx";
+import Searched from "./Searched.jsx";
+import Swal from "sweetalert2";
 
 function App() {
+  const[data,setdata] = useState([])
   const[showHome,setshowHome]=useState(false)
   const[view,setview]=useState('')
+  const[ref,setref]=useState(false)
+  const [id,setid]=useState(null)
+  const [url,seturl]=useState('')
+  const[blogid,setblogid] = useState(null)
+  const[searcheddata,setsearcheddata]=useState([])
+
+  const settblogid =(id)=>{
+    setblogid(id)
+    
+  }
+
+  const settid =(id)=>{
+    setid(id)
+  }
+
+  const setturl =(url)=>{
+    seturl(url)
+  }
+
+useEffect(()=>{
+axios.get('http://127.0.0.1:8080/blogs/getall')
+.then((response)=>{
+  console.log(response);
+   setdata(response.data.blogs)
+   
+})
+},[ref])
+
+const updtuser =(id,blog)=>{
+axios.put(`http://127.0.0.1:8080/users/update/${id}`,blog)
+.then(()=>{
+  changeview('allblogs')
+  Swal.fire({
+    position: "top-end",
+    icon: "success",
+    title: "Credentials Updated.",
+    showConfirmButton: false,
+    timer: 1500
+  });
+}).catch((err)=>{console.log(err);})
+}
+const deleteuser =(id)=>{
+  axios.delete(`http://127.0.0.1:8080/users/delete/${id}`)
+  .then(()=>{
+    setshowHome(false)
+    changeview('')
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "User deleted succesfully",
+      showConfirmButton: false,
+      timer: 1500
+    });
+  })
+}
+
+const searchblog =(x)=>{
+  axios.get(`http://127.0.0.1:8080/blogs/get/${x}`)
+  .then((response)=>{
+    console.log(response);
+    setsearcheddata(response.data)
+    console.log(response.data)
+    changeview('searched')
+  }).catch((err)=>{
+    Swal.fire({
+      icon: "error",
+      title: "No matching results",
+      text: "Try other place",
+    });
+    changeview('allblogs')
+    console.log(err);})
+}
 
 
-  const setvisibility = (x)=>{
+const addblog=(blog)=>{
+  axios.post('http://127.0.0.1:8080/blogs/addblog',blog)
+  .then((createUserResponse)=>{
+    if (createUserResponse.status === 201) {
+      console.log('User created successfully');
+      // Optionally clear form fields after successful creation
+      
+      // setimage_url('')
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your experience has been added",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      setrefresh(!ref)
+      changeview('allblogs')
+     
+    } else {
+      console.error('Failed to create user');
+    }
+  }).catch((err)=>{console.log(err);})
+}
+
+
+
+const setvisibility = (x)=>{
     setshowHome(x)
+  }
+  const setrefresh = (x)=>{
+    setref(x)
+  }
+  const handleRefresh = () => {
+    setref(!ref);
   }
 
   const changeview =(view) =>{
@@ -25,213 +132,41 @@ function App() {
 
   const renderview=()=>{
     if (view==='account'){
-      return <Account />
+      return <Account deleteuser={deleteuser} id={id} updtuser={updtuser} setturl={setturl}/>
     }
     if (view==='allblogs'){
-      return <Allblogs />
+      return <Allblogs id={id} data={data}/>
     }
     if (view==='addblog'){
-      return <Addblog />
+      return <Addblog addblog={addblog} iduser={id} />
     }
     if (view==='about'){
       return <About />
+    }
+    if (view==='myblogs'){
+      return <Myblogs settblogid={settblogid} id={id} setrefresh={handleRefresh} changeview={changeview} />
+    }
+    if (view==='updateblogs'){
+      return <Updateblog changeview={changeview} blogid={blogid} setrefresh={handleRefresh} />
+    }
+    if (view==='searched'){
+      return <Searched data={searcheddata}   />
     }
   }
 
   return (
     <div>
       <div style = {{visibility:showHome?'visible':'hidden'}}>
-        <Home changeview={changeview}/>
+        <Home searchblog={searchblog} url={url} changeview={changeview} homevisibilty={setvisibility} setrefresh={setrefresh}/>
      </div>
      <div style={{visibility:showHome?'hidden':'visible'}}>
-       <Login changeview={changeview} homevisibilty={setvisibility}/>
+       <Login setturl={setturl} settid={settid} changeview={changeview} homevisibilty={setvisibility} />
      </div>
      {renderview()}
   </div>
   )
-//   const [file,setfile]= useState(null)
-// const [name,setname]= useState('')
-// const [password,setpassword]= useState('')
-// const [image_url,setimage_url]=useState('')
-
-// const handleCreateUser = async () => {
-//   if (!name || !password || !file) {
-//     console.error('Please fill in all fields');
-//     return;
-//   }
-
-//   try {
-//     // Step 1: Upload image to Cloudinary directly from front end
-//     const formData = new FormData();
-//     formData.append('file', file);
-//     formData.append('upload_preset', 'firsttime'); // Replace with your Cloudinary upload preset
-
-//     const cloudinaryResponse = await axios.post(
-//       'https://api.cloudinary.com/v1_1/dryoeakcf/upload',
-//       formData
-//     );
-//     // Step 2: Create user with Cloudinary image URL
-//     // const imageUrl = cloudinaryResponse.data.secure_url;
-//     console.log( cloudinaryResponse.data.secure_url)
-//     setimage_url( cloudinaryResponse.data.secure_url)
-
-//     const createUserResponse = await axios.post('http://localhost:8080/users/adduser', {
-//       fullname:name,
-//       password:password,
-//       image_url: image_url
-//     });
-
-//     if (createUserResponse.status === 201) {
-//       console.log('User created successfully');
-//       // Optionally clear form fields after successful creation
-//       setname('');
-//       setpassword('');
-//       setfile(null);
-//       setimage_url('')
-//     } else {
-//       console.error('Failed to create user');
-//     }
-//   } catch (error) {
-//     console.error('Error creating user:', error);
-//   }
-// };
-
-//  return (
-//   <div>
-//     <div style = {{
-//       position :'absolute',
-//       marginTop: '5%',
-//       marginLeft: '59%',
-//     }}>
-//       <img style={{
-//         width :'100px',
-//         height :'100px'
-//       }} src="https://th.bing.com/th?id=OIP.AxSZxfJ0tsDUiyrlS3Cm7QHaHa&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="" />
-//     </div>
-//     <div style={{
-//       position: 'absolute',
-//       marginTop: '0%%',
-//       marginLeft: '39%',
-//       fontSize: 'xx-large'
-//     }}>
-//       <h1>TRAVSHOT</h1>
-//     </div>
-//      <div style={{
-//       position: 'absolute',
-//       marginTop: '20%',
-//       marginLeft: '42%'
-      
-//     }}>
-//       <input style={{borderRadius : '10px',
-//         backgroundColor :"white",
-//         color : 'black',
-//         height : '30px',
-//         width : '240px'
-//       }} type="text" placeholder="fullname" onChange={(e)=>{setname(e.target.value)}} />
-//       </div>
-//       <div style={{
-//       position: 'absolute',
-//       marginTop: '24%',
-//       marginLeft: '42%'
-      
-//     }}>
-//       <input style={{borderRadius : '10px',
-//         backgroundColor :"white",
-//         color : 'black',
-//         height : '30px',
-//         width : '240px'
-//       }}type="password" placeholder="password" onChange={(e)=>{setpassword(e.target.value)}}/>
-//       </div>
-//       <div  style={{
-//       position: 'absolute',
-//       marginTop: '30%',
-//       marginLeft: '43%'
-      
-//     }}>
-//       <input
-//   type="file" id="uploadBtn"
-//   onChange={(e) => { setfile(e.target.files[0]); }}
-//    style={{
-//     display:'none'
-//    }
-//    }
- 
-// />
-// <label htmlFor="uploadBtn"
-// style={{
-//   display:'inline-block',
-//   textTransform :'uppercase',
-//   color:'black',
-//   backgroundColor :'white',
-//   textAlign :'center',
-//   padding :'15px 40px',
-//   fontSize :'18px',
-//   letterSpacing :'1.5px',
-//   userSelect :'none',
-//   cursor :'pointer',
-//   boxShadow :'5px 15px 25px rgba(0,0,0,0.35)',
-//   borderRadius :'10px'
-//  }
-//  }
-// >UPLOAD IMAGE</label>
-//       {/* <input  style={{borderRadius : '20px'}} type="file" onChange={(e)=>{setfile(e.target.files[0])}}/> */}
-//       </div>
-//       <div  style={{
-//       position: 'absolute',
-//       marginTop: '39%',
-//       marginLeft: '38%'
-      
-//     }}>
-//         <button class="btn-12" onClick={handleCreateUser}><span>SIGN UP</span></button>
-
-//       </div>
-//        <div style={{
-//       position: 'absolute',
-//       marginTop: '39%',
-//       marginLeft: '54%'
-      
-//     }}>
-//         <button class="btn-12"><span>LOG IN</span></button>
-//        </div>
-//        <div style={{position:'absolute' , marginTop :'47%' , marginLeft:'28%',    fontSize: 'x-small'}}>
-//         <p style={{position:'absolute',    margin: 'auto', marginLeft: '77px'}}>TravelingBlogs.com is your ultimate destination for exploring the world through the eyes of passionate travelers.</p>
-//         <p> Our website hosts a rich tapestry of travel blogs, each offering unique insights, captivating stories, and practical tips from globetrotters across the globe.&copy;
-//         </p>
-//        </div>
-//   </div>
-//  )
-
 }
 
 export default App;
   
 
-//  const [loggedIn, setLoggedIn] = useState(false);
-
-
-// const handleLogin = async () => {
-//   try {
-//     const loginResponse = await axios.post('http://localhost:8080/users/login', {
-//       fullname: name,
-//       password: password
-//     });
-
-//     if (loginResponse.status === 200) {
-//       const token = loginResponse.data.token;
-//       // Store token in local storage
-//       localStorage.setItem('token', token);
-//       console.log('Login successful, token:', token);
-//       setLoggedIn(true); // Update login state
-//     } else {
-//       console.error('Login failed');
-//     }
-//   } catch (error) {
-//     console.error('Error during login:', error);
-//   }
-// };
-
-// const handleLogout = () => {
-//   // Clear token from local storage
-//   localStorage.removeItem('token');
-//   setLoggedIn(false); // Update login state
-// };

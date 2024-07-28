@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import './filebutt.css'
 // import axios from 'axios'
 import Nav from "./Navbar.jsx";
-import Allblogs from "./Allblogs.jsx";
 
-function Home({changeview}) {
+function Home({changeview,setrefresh,homevisibilty,url,searchblog}) {
     const[hideblogs,sethideblogs]=useState(null)
 
     const hide = (x)=>{
@@ -12,7 +11,7 @@ function Home({changeview}) {
       }
   return (
     <div style={{position:'realitve'}}>
-    <Nav changeview={changeview} hide={hide}/>
+    <Nav searchblog={searchblog} changeview={changeview} hide={hide} setrefresh={setrefresh} homevisibilty={homevisibilty} url={url} />
    {/* <div >
     <Allblogs />
    </div> */}

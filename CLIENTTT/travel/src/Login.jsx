@@ -1,7 +1,8 @@
 import React ,{useState} from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
-const Login = ({homevisibilty,changeview}) => {
+const Login = ({homevisibilty,changeview,settid,setturl}) => {
 
   const [file,setfile]= useState(null)
   const [name,setname]= useState('')
@@ -38,6 +39,13 @@ const handleCreateUser = async () => {
     });
 
     if (createUserResponse.status === 201) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "user added succesfully",
+        showConfirmButton: false,
+        timer: 1500
+      });
       console.log('User created successfully');
       // Optionally clear form fields after successful creation
       setname('');
@@ -59,10 +67,15 @@ const handleLogin = async () => {
     });
 
     if (loginResponse.status === 200) {
-      const token = loginResponse.data.token;
+      const { token, iduser,image_url } = loginResponse.data;
+      localStorage.setItem('token', token); // Store token in local storage
+      settid(iduser)
+      setturl(image_url)
+      // localStorage.setItem('iduser', iduser);
       // Store token in local storage
     //   localStorage.setItem('token', token);
       console.log('Login successful, token:', token);
+      console.log('Login successful, iduser:', iduser);
       homevisibilty(true)
       changeview('allblogs')
       setLoggedIn(true); // Update login state
@@ -73,6 +86,7 @@ const handleLogin = async () => {
     console.error('Error during login:', error);
   }
 };
+
 
 
 
